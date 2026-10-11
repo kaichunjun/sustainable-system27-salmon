@@ -6,7 +6,8 @@ const tourButton=document.querySelector('#tour-button');
 const reduced=matchMedia('(prefers-reduced-motion: reduce)');
 const mobile=matchMedia('(max-width:760px)');
 const opening=document.querySelector('#opening');
-if(opening){artwork.inert=true;setTimeout(()=>{opening.remove();artwork.inert=false;},reduced.matches?0:3050);}
+const openingStarted=performance.now();
+if(opening)artwork.inert=true;
 const sections=[
  {id:'origin',box:[0,200,1420,2600],en:{title:'Where from?',body:'The collage begins with salmon, a Norwegian flag, coastlines and fishing scenes. These images connect the food to places, waters and the people involved in obtaining it.',links:['Origin and waters','Fishing and farming routes','Fishing labour and ecological relationships'],context:'The flag and photographs are visual references. The source of a particular product needs to be traced through its label and supplier.'},zh:{title:'来自哪里？',body:'这组拼贴从三文鱼、挪威旗帜、海岸与捕鱼场景开始，把食物连接到地理位置、水域，以及获取食物的人。',links:['产地与水域','捕捞与养殖路线','捕鱼劳动与生态关系'],context:'旗帜与照片是视觉线索。具体商品的来源，需要通过标签及供应商资料追踪。'}},
  {id:'transport',box:[590,1100,1630,1710],en:{title:'Transportation',body:'The vessel connects the source of the fish with processing. The images below it extend this stage into fuel use, electricity, refrigeration and environmental costs.',links:['Transport fuel','Refrigeration and electricity','Shipping routes and handling'],context:'The collage illustrates these connections; it does not establish the shipping route of a specific batch.'},zh:{title:'第一次运输',body:'船舶连接鱼的来源与后续加工。下方图像将这一环节继续接到燃料、电力、制冷与环境代价。',links:['运输燃料','制冷与电力','运输路线与装卸'],context:'拼贴展示这些联系；具体批次的运输路线仍需供应链证据。'}},
@@ -49,11 +50,53 @@ document.querySelectorAll('[data-language]').forEach(b=>b.addEventListener('clic
 document.querySelector('#read-button').addEventListener('click',()=>{if(speaking){stopAudio(true);scheduleAdvance(8500);return;}readCurrent();});
 artwork.addEventListener('click',event=>{if(current<0||event.target.closest('.group,.panel,button'))return;closePanel();});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&current>=0)closePanel();});document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(driftFrame);pauseTour();stopAudio();}else if(current>=0){cameraTo(selectedView(sections[current]),true);}});new ResizeObserver(()=>{if(current>=0){cameraTo(selectedView(sections[current]),true);}else applyView([0,0,5100,3300]);}).observe(artwork);
-const images=[...scene.querySelectorAll('img')];let failed=0;Promise.all(images.map(im=>new Promise(resolve=>{const test=new Image();test.onload=resolve;test.onerror=()=>{failed++;resolve();};test.src=im.getAttribute('src');}))).then(()=>{const message=document.querySelector('#load-message');if(failed)message.textContent='Some images could not load. Please reopen the page.';else message.hidden=true;});
+// Decode the displayed images themselves before revealing the map.
+function preparePhoto(image){
+ if(typeof image.decode==='function')return image.decode();
+ return new Promise((resolve,reject)=>{
+  if(image.complete){image.naturalWidth>0?resolve():reject();return;}
+  image.addEventListener('load',resolve,{once:true});
+  image.addEventListener('error',reject,{once:true});
+ });
+}
+function revealOpening(){
+ // Paint the finished map behind the opaque title before fading that title.
+ requestAnimationFrame(()=>{
+  document.body.classList.add('map-ready');
+  requestAnimationFrame(()=>{
+   if(!opening){artwork.inert=false;return;}
+   let finished=false,fallback;
+   function finish(){
+    if(finished)return;
+    finished=true;clearTimeout(fallback);opening.remove();artwork.inert=false;
+   }
+   if(reduced.matches){finish();return;}
+   opening.addEventListener('animationend',event=>{
+    if(event.target===opening&&event.animationName==='opening-out')finish();
+   });
+   opening.classList.add('is-revealing');
+   // Covers a browser suppressing animationend, e.g. a motion preference change.
+   fallback=setTimeout(finish,1700);
+  });
+ });
+}
+const images=[...scene.querySelectorAll('img')];
+const openingReady=Promise.all([
+ Promise.allSettled(images.map(preparePhoto)),
+ document.fonts?document.fonts.ready:Promise.resolve()
+]).then(([results])=>{
+ const failed=results.filter(result=>result.status==='rejected').length;
+ const message=document.querySelector('#load-message');
+ if(failed)message.textContent='Some images could not load. Please reopen the page.';
+ else message.hidden=true;
+ applyView([0,0,5100,3300]);fitMapText();
+ const remaining=reduced.matches?0:Math.max(0,1600-(performance.now()-openingStarted));
+ return new Promise(resolve=>setTimeout(()=>{revealOpening();resolve();},remaining));
+});
 
 reduced.addEventListener?.('change',()=>{if(current>=0)cameraTo(selectedView(sections[current]),true);});
 
 function fitMapText(){document.querySelectorAll('.map-text').forEach(el=>{const original=Number(el.dataset.fontSize);el.style.fontSize=original+'px';const span=el.firstElementChild;const measured=span.getBoundingClientRect().width;const parentScale=scene.getBoundingClientRect().width/5100;const desired=el.clientWidth*parentScale;if(measured>desired&&desired>0)el.style.fontSize=Math.max(12,original*desired/measured)+'px';});}
 applyView([0,0,5100,3300]);
 fitMapText();
-if(document.fonts)document.fonts.ready.then(fitMapText);
+

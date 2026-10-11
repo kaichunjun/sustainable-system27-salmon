@@ -5,8 +5,9 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#ffffff">
   <title>Salmon · Independent Web Map</title>
-  <link rel="stylesheet" href="style.css">
-  <script src="app.js" defer></script>
+  <style>html,body{margin:0;background:#fff}.opening{position:fixed;inset:0;background:#fff;display:grid;place-items:center;z-index:100}.artwork{visibility:hidden}</style>
+  <link rel="stylesheet" href="style.css?v=036">
+  <script src="app.js?v=036" defer></script>
 </head>
 <body>
   <div class="opening" id="opening" role="status">
@@ -158,6 +159,6 @@
     </aside>
     <p class="load-message" id="load-message" role="status">Loading images…</p>
   </main>
-  <noscript><style>.opening{display:none}</style><p>Enable JavaScript to browse the interactive map.</p></noscript>
+  <noscript><style>.opening{display:none}.artwork{visibility:visible}</style><p>Enable JavaScript to browse the interactive map.</p></noscript>
 </body>
 </html>
