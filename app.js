@@ -99,4 +99,3 @@ reduced.addEventListener?.('change',()=>{if(current>=0)cameraTo(selectedView(sec
 function fitMapText(){document.querySelectorAll('.map-text').forEach(el=>{const original=Number(el.dataset.fontSize);el.style.fontSize=original+'px';const span=el.firstElementChild;const measured=span.getBoundingClientRect().width;const parentScale=scene.getBoundingClientRect().width/5100;const desired=el.clientWidth*parentScale;if(measured>desired&&desired>0)el.style.fontSize=Math.max(12,original*desired/measured)+'px';});}
 applyView([0,0,5100,3300]);
 fitMapText();
-
