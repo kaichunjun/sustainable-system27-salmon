@@ -6,8 +6,8 @@
   <meta name="theme-color" content="#ffffff">
   <title>Salmon · Independent Web Map</title>
   <style>html,body{margin:0;background:#fff}.opening{position:fixed;inset:0;background:#fff;display:grid;place-items:center;z-index:100}.artwork{visibility:hidden}</style>
-  <link rel="stylesheet" href="style.css?v=036">
-  <script src="app.js?v=036" defer></script>
+  <link rel="stylesheet" href="style.css?v=037">
+  <script src="app.js?v=037" defer></script>
 </head>
 <body>
   <div class="opening" id="opening" role="status">
@@ -16,6 +16,7 @@
   <main class="artwork">
     <h1 class="sr-only">Salmon: flow and world</h1>
     <div class="world-viewport">
+      <div class="camera-layer" id="camera">
       <div class="board" id="scene" aria-label="Salmon food system map">
 <p class="map-text caption" style="left:40px;top:43.532px;width:470px;font-size:27.4px;" data-font-size="27.4"><span>all the picture form Pinterest</span></p>
 <p class="map-text caption" style="left:95px;top:97.904px;width:4875px;font-size:32.8px;" data-font-size="32.8"><span>Fertilized fish eggs hatch → Freshwater rearing → Transferred to seawater net cages → Feeding and farming → Harvesting → Processing (removing internal organs, slicing, deboning)</span></p>
@@ -115,7 +116,8 @@
   <p class="map-text caption white" style="left:1751px;top:232px;width:369px;font-size:40.0px;" data-font-size="40.0"><span>Impact on human life.</span></p>
 </section>
 <div class="impact-label" aria-hidden="true"></div>
-<svg class="connections" viewBox="0 0 5100 3300" aria-hidden="true"><defs><marker id="food-arrow" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="#ee252a" /></marker><marker id="resource-arrow" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="#383838" /></marker><marker id="ecology-arrow" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="#006582" /></marker></defs><path class="flow food" data-section="transport" d="M390 1420 C540 1650 620 1640 765 1620" marker-end="url(#food-arrow)" />
+</div>
+<svg id="connections" class="connections" viewBox="0 0 5100 3300" aria-hidden="true"><defs><marker id="food-arrow" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="#ee252a" /></marker><marker id="resource-arrow" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="#383838" /></marker><marker id="ecology-arrow" markerWidth="6" markerHeight="6" refX="5.5" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0 0 L6 3 L0 6 Z" fill="#006582" /></marker></defs><path class="flow food" data-section="transport" d="M390 1420 C540 1650 620 1640 765 1620" marker-end="url(#food-arrow)" />
 <path class="flow food" data-section="processing" d="M1450 1600 C1600 1600 1680 1540 1820 1540" marker-end="url(#food-arrow)" />
 <path class="flow food" data-section="packaging" d="M2360 1260 C2410 1260 2460 1150 2515 1150" marker-end="url(#food-arrow)" />
 <path class="flow food" data-section="trade" d="M3060 1320 C3170 1250 3250 1110 3350 1040" marker-end="url(#food-arrow)" />
